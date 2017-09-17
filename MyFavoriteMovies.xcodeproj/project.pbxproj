@@ -152,6 +152,7 @@
 				TargetAttributes = {
 					A9A3A22D1BEBE25C009BE8E1 = {
 						CreatedOnToolsVersion = 7.1;
+						DevelopmentTeam = 4DAVYD557D;
 						LastSwiftMigration = 0900;
 					};
 				};
@@ -330,6 +331,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 4DAVYD557D;
 				INFOPLIST_FILE = MyFavoriteMovies/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Udacity.MyFavoriteMovies;
@@ -343,6 +345,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 4DAVYD557D;
 				INFOPLIST_FILE = MyFavoriteMovies/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Udacity.MyFavoriteMovies;
