@@ -34,7 +34,7 @@ class LoginViewController: UIViewController {
         appDelegate = UIApplication.shared.delegate as! AppDelegate
         
         configureUI()
-        
+                
         subscribeToNotification(.UIKeyboardWillShow, selector: #selector(keyboardWillShow))
         subscribeToNotification(.UIKeyboardWillHide, selector: #selector(keyboardWillHide))
         subscribeToNotification(.UIKeyboardDidShow, selector: #selector(keyboardDidShow))
@@ -56,6 +56,9 @@ class LoginViewController: UIViewController {
             debugTextLabel.text = "Username or Password Empty."
         } else {
             setUIEnabled(false)
+            
+            appDelegate.userName = usernameTextField.text!
+            appDelegate.passWord = passwordTextField.text!
             
             /*
                 Steps for Authentication...
@@ -105,7 +108,7 @@ class LoginViewController: UIViewController {
         /* 2/3. Build the URL, Configure the request */
         let request = URLRequest(url: appDelegate.tmdbURLFromParameters(methodParameters as [String:AnyObject], withPathExtension: "/authentication/token/new"))
         
-        print("\(request)")
+        print("REQUEST_TOKEN: \(request)")
         
         /* 4. Make the request */
         let task = appDelegate.sharedSession.dataTask(with: request) { (data, response, error) in
@@ -149,6 +152,8 @@ class LoginViewController: UIViewController {
                 return
             }
             
+            print("TOKEN: \(token)")
+            
             /* 6. Use the data! */
             self.appDelegate.requestToken = token
             self.loginWithToken(self.appDelegate.requestToken!)
@@ -159,20 +164,80 @@ class LoginViewController: UIViewController {
     }
     
     private func loginWithToken(_ requestToken: String) {
-        print("\(#function), token: \(requestToken)")
+        
+        print("FUNCTION:\(#function), TOKEN: \(requestToken)")
         
         /* TASK: Login, then get a session id */
         
+        // if an error occurs, print it and re-enable the UI
+        func displayError(_ error: String) {
+            print(error)
+            performUIUpdatesOnMain {
+                self.setUIEnabled(true)
+                self.debugTextLabel.text = "Login Failed (Reqst Token)."
+            }
+        }
+        
         /* 1. Set the parameters */
+        let methodParameters = [
+            Constants.TMDBParameterKeys.ApiKey: Constants.TMDBParameterValues.ApiKey,
+            Constants.TMDBParameterKeys.Username: appDelegate.userName,
+            Constants.TMDBParameterKeys.Password: appDelegate.passWord,
+            Constants.TMDBParameterKeys.RequestToken: appDelegate.requestToken
+        ]
+        
         /* 2/3. Build the URL, Configure the request */
+        let request = URLRequest(url: appDelegate.tmdbURLFromParameters(methodParameters as [String : AnyObject], withPathExtension: "/authentication/token/validate_with_login"))
+        print("REQUEST_SESSION_ID: \(request)")
+        
         /* 4. Make the request */
-        /* 5. Parse the data */
-        /* 6. Use the data! */
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            
+            /* GUARD: Was there an error? */
+            guard (error == nil) else {
+                displayError("There was an error with your request: \(error!)")
+                return
+            }
+            
+            /* GUARD: Did we get a successful 2XX response? */
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+                displayError("Your request returned a status code other than 2xx!\(String(describing: response))")
+                return
+            }
+            
+            /* GUARD: Was there any data returned? */
+            guard let data = data else {
+                displayError("No data was returned by the request!")
+                return
+            }
+            
+            /* 5. Parse the data */
+            let parsedResult: [String: AnyObject]!
+            do {
+                parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
+            } catch {
+                displayError("Could not parse the data as JSON: '\(data)'")
+                return
+            }
+            
+            print("jason: \(parsedResult)")
+            
+            guard let success = parsedResult[Constants.TMDBResponseKeys.Success] as? Bool, success == true else {
+                displayError("Could not find key \(Constants.TMDBResponseKeys.Success)")
+                return
+            }
+            
+            /* 6. Use the data! */
+            self.getSessionID(self.appDelegate.requestToken!)
+        }
+        
         /* 7. Start the request */
+        task.resume()
     }
     
     private func getSessionID(_ requestToken: String) {
-        
+        print("Function:\(#function), SESSION_ID: \(requestToken)")
+
         /* TASK: Get a session ID, then store it (appDelegate.sessionID) and get the user's id */
         
         /* 1. Set the parameters */

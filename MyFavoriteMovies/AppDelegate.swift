@@ -22,6 +22,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var sessionID: String? = nil
     var userID: Int? = nil
     
+    var userName: String?
+    var passWord: String?
+    
     // configuration for TheMovieDB, we'll take care of this for you =)...
     var config = Config()
     
