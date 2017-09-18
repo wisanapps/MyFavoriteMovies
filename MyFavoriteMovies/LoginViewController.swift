@@ -108,8 +108,6 @@ class LoginViewController: UIViewController {
         /* 2/3. Build the URL, Configure the request */
         let request = URLRequest(url: appDelegate.tmdbURLFromParameters(methodParameters as [String:AnyObject], withPathExtension: "/authentication/token/new"))
         
-        print("REQUEST_TOKEN: \(request)")
-        
         /* 4. Make the request */
         let task = appDelegate.sharedSession.dataTask(with: request) { (data, response, error) in
             
@@ -165,8 +163,6 @@ class LoginViewController: UIViewController {
     
     private func loginWithToken(_ requestToken: String) {
         
-        print("FUNCTION:\(#function), TOKEN: \(requestToken)")
-        
         /* TASK: Login, then get a session id */
         
         // if an error occurs, print it and re-enable the UI
@@ -174,7 +170,7 @@ class LoginViewController: UIViewController {
             print(error)
             performUIUpdatesOnMain {
                 self.setUIEnabled(true)
-                self.debugTextLabel.text = "Login Failed (Reqst Token)."
+                self.debugTextLabel.text = "Login Failed (Session Invalid)."
             }
         }
         
@@ -188,7 +184,6 @@ class LoginViewController: UIViewController {
         
         /* 2/3. Build the URL, Configure the request */
         let request = URLRequest(url: appDelegate.tmdbURLFromParameters(methodParameters as [String : AnyObject], withPathExtension: "/authentication/token/validate_with_login"))
-        print("REQUEST_SESSION_ID: \(request)")
         
         /* 4. Make the request */
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -220,7 +215,7 @@ class LoginViewController: UIViewController {
                 return
             }
             
-            print("jason: \(parsedResult)")
+            //print("jason: \(parsedResult)")
             
             guard let success = parsedResult[Constants.TMDBResponseKeys.Success] as? Bool, success == true else {
                 displayError("Could not find key \(Constants.TMDBResponseKeys.Success)")
@@ -229,6 +224,7 @@ class LoginViewController: UIViewController {
             
             /* 6. Use the data! */
             self.getSessionID(self.appDelegate.requestToken!)
+            print("loged in, now get the session id")
         }
         
         /* 7. Start the request */
@@ -236,7 +232,6 @@ class LoginViewController: UIViewController {
     }
     
     private func getSessionID(_ requestToken: String) {
-        print("Function:\(#function), SESSION_ID: \(requestToken)")
 
         /* TASK: Get a session ID, then store it (appDelegate.sessionID) and get the user's id */
         
