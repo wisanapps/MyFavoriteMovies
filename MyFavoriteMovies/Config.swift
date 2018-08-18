@@ -119,7 +119,7 @@ class Config: NSObject, NSCoding {
             /* Parse the data! */
             let parsedResult: [String:AnyObject]!
             do {
-                parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
+                parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String:AnyObject]
             } catch {
                 print("Could not parse the data as JSON: '\(data)'")
                 return

@@ -24,7 +24,7 @@ class GenreTableViewController: UITableViewController {
         super.viewDidLoad()
         
         // get the app delegate
-        appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate = UIApplication.shared.delegate as? AppDelegate
         
         // get the correct genre id
         genreID = genreIDFromItemTag(tabBarItem.tag)
@@ -72,7 +72,7 @@ class GenreTableViewController: UITableViewController {
             /* 5. Parse the data */
             let parsedResult: [String:AnyObject]!
             do {
-                parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
+                parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String:AnyObject]
             } catch {
                 print("Could not parse the data as JSON: '\(data)'")
                 return
@@ -80,13 +80,13 @@ class GenreTableViewController: UITableViewController {
             
             /* GUARD: Did TheMovieDB return an error? */
             if let _ = parsedResult[Constants.TMDBResponseKeys.StatusCode] as? Int {
-                print("TheMovieDB returned an error. See the '\(Constants.TMDBResponseKeys.StatusCode)' and '\(Constants.TMDBResponseKeys.StatusMessage)' in \(parsedResult)")
+                print("TheMovieDB returned an error. See the '\(Constants.TMDBResponseKeys.StatusCode)' and '\(Constants.TMDBResponseKeys.StatusMessage)' in \(String(describing: parsedResult))")
                 return
             }
             
             /* GUARD: Is the "results" key in parsedResult? */
             guard let results = parsedResult[Constants.TMDBResponseKeys.Results] as? [[String:AnyObject]] else {
-                print("Cannot find key '\(Constants.TMDBResponseKeys.Results)' in \(parsedResult)")
+                print("Cannot find key '\(Constants.TMDBResponseKeys.Results)' in \(String(describing: parsedResult))")
                 return
             }
             
@@ -117,12 +117,12 @@ extension GenreTableViewController {
         // get cell type
         let cellReuseIdentifier = "MovieTableViewCell"
         let movie = movies[(indexPath as NSIndexPath).row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier) as UITableViewCell!
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier)
         
         // set cell defaults
         cell?.textLabel!.text = movie.title
         cell?.imageView!.image = UIImage(named: "Film Icon")
-        cell?.imageView!.contentMode = UIViewContentMode.scaleAspectFit
+        cell?.imageView!.contentMode = UIView.ContentMode.scaleAspectFit
         
         /* TASK: Get the poster image, then populate the image view */
         if let posterPath = movie.posterPath {

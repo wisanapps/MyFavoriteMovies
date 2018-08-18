@@ -31,14 +31,14 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         
         // get the app delegate
-        appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate = UIApplication.shared.delegate as? AppDelegate
         
         configureUI()
         
-        subscribeToNotification(.UIKeyboardWillShow, selector: #selector(keyboardWillShow))
-        subscribeToNotification(.UIKeyboardWillHide, selector: #selector(keyboardWillHide))
-        subscribeToNotification(.UIKeyboardDidShow, selector: #selector(keyboardDidShow))
-        subscribeToNotification(.UIKeyboardDidHide, selector: #selector(keyboardDidHide))
+        subscribeToNotification(UIResponder.keyboardWillShowNotification, selector: #selector(keyboardWillShow))
+        subscribeToNotification(UIResponder.keyboardWillHideNotification, selector: #selector(keyboardWillHide))
+        subscribeToNotification(UIResponder.keyboardDidShowNotification, selector: #selector(keyboardDidShow))
+        subscribeToNotification(UIResponder.keyboardDidHideNotification, selector: #selector(keyboardDidHide))
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -134,7 +134,7 @@ class LoginViewController: UIViewController {
             /* Parse the data! */
             let parsedResult: [String: AnyObject]!
             do {
-                parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
+                parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String : AnyObject]
             } catch {
                 displayError("Could not parse the data as JSON: '\(data)'")
                 return
@@ -209,7 +209,7 @@ class LoginViewController: UIViewController {
             /* 5. Parse the data */
             let parsedResult: [String: AnyObject]!
             do {
-                parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : AnyObject]
+                parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String : AnyObject]
             } catch {
                 displayError("Could not parse the data as JSON: '\(data)'")
                 return
@@ -274,7 +274,7 @@ class LoginViewController: UIViewController {
             /* 5. Parse the data */
             let parsedResult: [String: AnyObject]!
             do {
-                parsedResult = try JSONSerialization.jsonObject(with: jasonData, options: .allowFragments) as! [String: AnyObject]
+                parsedResult = try JSONSerialization.jsonObject(with: jasonData, options: .allowFragments) as? [String: AnyObject]
             } catch {
                 displayError("Could not parse the data as JSON: '\(jasonData)'")
                 return
@@ -346,7 +346,7 @@ class LoginViewController: UIViewController {
             /* 5. Parse the data */
             let json: [String: AnyObject]!
             do{
-                json = try JSONSerialization.jsonObject(with: returnedData, options: .allowFragments) as! [String: AnyObject]
+                json = try JSONSerialization.jsonObject(with: returnedData, options: .allowFragments) as? [String: AnyObject]
             } catch {
                 displayError("Could not pasrse data as JSON: '\(returnedData)'")
                 return
@@ -404,7 +404,7 @@ extension LoginViewController: UITextFieldDelegate {
     
     private func keyboardHeight(_ notification: Notification) -> CGFloat {
         let userInfo = (notification as NSNotification).userInfo
-        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue
+        let keyboardSize = userInfo![UIResponder.keyboardFrameEndUserInfoKey] as! NSValue
         return keyboardSize.cgRectValue.height
     }
     
@@ -459,7 +459,7 @@ private extension LoginViewController {
         textField.leftViewMode = .always
         textField.backgroundColor = Constants.UI.GreyColor
         textField.textColor = Constants.UI.BlueColor
-        textField.attributedPlaceholder = NSAttributedString(string: textField.placeholder!, attributes: [NSAttributedStringKey.foregroundColor: UIColor.white])
+        textField.attributedPlaceholder = NSAttributedString(string: textField.placeholder!, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
         textField.tintColor = Constants.UI.BlueColor
         textField.delegate = self
     }

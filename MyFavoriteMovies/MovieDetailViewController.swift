@@ -31,7 +31,7 @@ class MovieDetailViewController: UIViewController {
         super.viewDidLoad()
         
         // get the app delegate
-        appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate = UIApplication.shared.delegate as? AppDelegate
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -79,7 +79,7 @@ class MovieDetailViewController: UIViewController {
                 /* 5A. Parse the data */
                 let parsedResult: [String:AnyObject]!
                 do {
-                    parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
+                    parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String:AnyObject]
                 } catch {
                     print("Could not parse the data as JSON: '\(data)'")
                     return
@@ -87,13 +87,13 @@ class MovieDetailViewController: UIViewController {
                 
                 /* GUARD: Did TheMovieDB return an error? */
                 if let _ = parsedResult[Constants.TMDBResponseKeys.StatusCode] as? Int {
-                    print("TheMovieDB returned an error. See the '\(Constants.TMDBResponseKeys.StatusCode)' and '\(Constants.TMDBResponseKeys.StatusMessage)' in \(parsedResult)")
+                    print("TheMovieDB returned an error. See the '\(Constants.TMDBResponseKeys.StatusCode)' and '\(Constants.TMDBResponseKeys.StatusMessage)' in \(String(describing: parsedResult))")
                     return
                 }
                 
                 /* GUARD: Is the "results" key in parsedResult? */
                 guard let results = parsedResult[Constants.TMDBResponseKeys.Results] as? [[String:AnyObject]] else {
-                    print("Cannot find key '\(Constants.TMDBResponseKeys.Results)' in \(parsedResult)")
+                    print("Cannot find key '\(Constants.TMDBResponseKeys.Results)' in \(String(describing: parsedResult))")
                     return
                 }
                 
